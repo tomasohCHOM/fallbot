@@ -3,7 +3,7 @@ import torch
 import numpy as np
 
 # Load YOLO model
-model = torch.hub.load("ultralytics/yolov8", "yolov8n")
+model = torch.hub.load("ultralytics/yolov5", "yolov5s")
 
 
 # Define a function to detect falls
