@@ -1,3 +1,2 @@
 venv
-yolov5s.pt
-yolov8n.pt
+*.pt
