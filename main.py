@@ -3,14 +3,14 @@ import cvzone
 import math
 from ultralytics import YOLO
 
-cap = cv2.VideoCapture("../video/falling.mp4")
+cap = cv2.VideoCapture("video/falling.mp4")
 # Change to this when using raspbot
 # cap = cv2.VideoCapture(0)
 
 model = YOLO("yolov8s.pt")
 
 classnames = []
-with open("../classes/classes.txt", "r") as f:
+with open("classes/classes.txt", "r") as f:
     classnames = f.read().splitlines()
 
 
