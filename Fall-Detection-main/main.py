@@ -8,6 +8,7 @@ cap = cv2.VideoCapture('fall.mp4')
 # cap = cv2.VideoCapture(0)
 # however for me didn't work
 
+
 model = YOLO('yolov8s.pt')
 
 classnames = []
