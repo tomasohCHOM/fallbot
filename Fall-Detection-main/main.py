@@ -51,7 +51,8 @@ while True:
     cv2.imshow('frame', frame)
     if cv2.waitKey(1) & 0xFF == ord('t'):
         break
-        
+
+    
 
 cap.release()
 cv2.destroyAllWindows()
