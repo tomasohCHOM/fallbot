@@ -4,67 +4,67 @@ DB_NAME = "owner.db"
 DB_TABLE_NAME = "owner"
 
 
-def create_db():
+def create_owner_database():
+    """Create the database. Needs to only be run once."""
     try:
-        con = sqlite3.connect(DB_NAME)
-        with con:
+        with sqlite3.connect(DB_NAME) as con:
             cur = con.cursor()
-            cur.execute(
-                """CREATE TABLE IF NOT EXISTS owner (
-                        username text,
-                        password text,
-                        email text,
-                        first_name text,
-                        last_name text,
-                        emergency_contact integer
-                )"""
+            query = f"""
+            CREATE TABLE IF NOT EXISTS {DB_TABLE_NAME} (
+                username text,
+                email text,
+                first_name text,
+                last_name text,
+                emergency_contact integer
             )
+            """
+            cur.execute(query)
     except sqlite3.Error as error:
         print("Error connecting to SQLite database", error)
 
 
 def insert_data(
     username: str,
-    password: str,
     email: str,
     first_name: str,
     last_name: str,
     emergency_contact: int,
 ):
-    con = sqlite3.connect(DB_NAME)
-    with con:
+    """Insert the owner information into the database."""
+    with sqlite3.connect(DB_NAME) as con:
         cur = con.cursor()
-        cur.execute(
-            f"""
-            INSERT INTO {DB_TABLE_NAME} VALUES ("{username}", "{password}", "{email}", "{first_name}", "{last_name}", {emergency_contact})
-        """
-        )
+        query = f"""
+        INSERT INTO {DB_TABLE_NAME} (
+            username, email, first_name, last_name, emergency_contact
+        ) VALUES (?, ?, ?, ?, ?)"""
+        cur.execute(query, (username, email, first_name, last_name, emergency_contact))
+        con.commit()
 
 
 def get_owner_info():
-    db = sqlite3.connect(DB_NAME)
-    cur = db.cursor()
-
-    cur.execute("SELECT username, email, first_name, last_name FROM owner")
-    info = cur.fetchall()
-    for elm in info:
-        print(elm)
-    cur.close()
+    """Retrieve the username, email, first name, and last name of the owner."""
+    owner_info = []
+    with sqlite3.connect(DB_NAME) as con:
+        cur = con.cursor()
+        query = f"SELECT username, email, first_name, last_name FROM {DB_TABLE_NAME}"
+        cur.execute(query)
+        owner_info = cur.fetchone()
+    return owner_info
 
 
 def get_emergency_contact():
-    db = sqlite3.connect(DB_NAME)
-    cur = db.cursor()
-
-    cur.execute("SELECT emergency_contact FROM owner")
-    emergency_contact = cur.fetchone()
-    cur.close()
+    """Retrieve the emergency contact from the owner table."""
+    with sqlite3.connect(DB_NAME) as con:
+        cur = con.cursor()
+        query = f"SELECT emergency_contact FROM {DB_TABLE_NAME}"
+        cur.execute(query)
+        emergency_contact = cur.fetchone()
     return emergency_contact
 
 
 def main():
-    create_db()
-    print(get_owner_info()[0])
+    create_owner_database()
+    print(get_owner_info())
     print(get_emergency_contact()[0])
 
 
