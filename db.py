@@ -60,12 +60,3 @@ def get_emergency_contact():
         cur.execute(query)
         emergency_contact = cur.fetchone()
     return emergency_contact
-
-
-def main():
-    create_owner_database()
-    print(get_owner_info())
-    print(get_emergency_contact()[0])
-
-
-main()
