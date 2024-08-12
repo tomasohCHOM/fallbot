@@ -1,5 +1,3 @@
-# TODO: Check how much time has passed since the person has fallen
-
 import cv2
 import cvzone
 import math

@@ -1,6 +1,7 @@
 cvzone==1.6.1
 numpy==1.26.4
 opencv-python==4.9.0.80
+python-dotenv==1.0.1
 smbus==1.1.post2
 torch==2.4.0
 ultralytics==8.2.71
