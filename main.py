@@ -5,7 +5,7 @@ import time
 from ultralytics import YOLO
 import emergency
 
-cap = cv2.VideoCapture("video/fall.mp4")
+cap = cv2.VideoCapture("video/fall1.mp4")
 # Change to this when using raspbot
 # cap = cv2.VideoCapture(0)
 
@@ -52,7 +52,8 @@ while True:
                         seconds_elapsed = end - start
                         if seconds_elapsed >= 5:
                             print(f"PERSON HAS FALLEN FOR {seconds_elapsed} SECONDS")
-                            emergency.draft_emergency_message()
+                            emergency.send_emergency_message()
+                            fallen = False
                     else:
                         fallen = True
                         start = time.time()
