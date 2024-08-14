@@ -15,7 +15,8 @@ def create_owner_database():
                 email text,
                 first_name text,
                 last_name text,
-                emergency_contact integer
+                emergency_contact integer,
+                carrier text
             )
             """
             cur.execute(query)
@@ -29,15 +30,16 @@ def insert_data(
     first_name: str,
     last_name: str,
     emergency_contact: int,
+    carrier: str
 ):
     """Insert the owner information into the database."""
     with sqlite3.connect(DB_NAME) as con:
         cur = con.cursor()
         query = f"""
         INSERT INTO {DB_TABLE_NAME} (
-            username, email, first_name, last_name, emergency_contact
-        ) VALUES (?, ?, ?, ?, ?)"""
-        cur.execute(query, (username, email, first_name, last_name, emergency_contact))
+            username, email, first_name, last_name, emergency_contact, carrier
+        ) VALUES (?, ?, ?, ?, ?, ?)"""
+        cur.execute(query, (username, email, first_name, last_name, emergency_contact, carrier))
         con.commit()
 
 
@@ -59,4 +61,21 @@ def get_emergency_contact():
         query = f"SELECT emergency_contact FROM {DB_TABLE_NAME}"
         cur.execute(query)
         emergency_contact = cur.fetchone()
-    return emergency_contact
+    return emergency_contact[0]
+
+def get_carrier():
+    """Retrieve the carrier of the emergency contact from the owner table."""
+    with sqlite3.connect(DB_NAME) as con:
+        cur = con.cursor()
+        query = f"SELECT carrier FROM {DB_TABLE_NAME}"
+        cur.execute(query)
+        carrier = cur.fetchone()
+    return carrier[0]
+
+
+def main():
+    create_owner_database()
+    insert_data("maar", "mary@gmail.com", "mar", "nsh", 8492, "tmobile")
+
+
+main()
