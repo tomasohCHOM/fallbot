@@ -51,14 +51,8 @@ while True:
                     if fallen:
                         end = time.time()
                         seconds_elapsed = end - start
-                        if seconds_elapsed >= 5:
-                            print(f"PERSON HAS FALLEN FOR {seconds_elapsed} SECONDS")
-                            emergency.draft_emergency_message()
-                            phone_number = db.get_emergency_contact()
-                            carrier = db.get_carrier()
-                            print(carrier)
-                            message = "jfdkfjd"
-                            emergency.send_message(phone_number, carrier, message)
+                        if seconds_elapsed >= 2:
+                            emergency.send_emergency_message()
                             fallen = False
                     else:
                         fallen = True
@@ -76,4 +70,3 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
-
