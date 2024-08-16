@@ -89,10 +89,3 @@ def get_carrier():
     if not carrier:
         raise Exception("Could not get carrier in DB.")
     return carrier[0]
-
-
-def sample():
-    # insert_data("maar", "mary@gmail.com", "mar", "nsh", 8492, "tmobile")
-    print(get_emergency_contact())
-    print(get_owner_info())
-    print(get_carrier())

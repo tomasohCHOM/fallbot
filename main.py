@@ -1,81 +1,25 @@
-import cv2
-import cvzone
-import math
-import time
-from ultralytics import YOLO
-import emergency
+import db
+import os
+import fall
 
-VIDEO_PATH = "video/fall1.mp4"  # Replace with 0 when using raspbot
-TIME_TILL_EMERGENCY_MESSAGE = 5  # Seconds before raspbot sends emergency message
-CONFIDENCE_THRESHOLD = 80  # Minimum confidence to consider detection
-
-# Load YOLOv8 model
-model = YOLO("yolov8s.pt")
-
-# Load class names
-with open("classes/classes.txt", "r") as f:
-    classnames = f.read().splitlines()
-
-cap = cv2.VideoCapture(VIDEO_PATH)
-
-fallen = False
-start_time = 0
-
-
-def detect_fall(box, class_detect, frame):
-    global fallen, start_time
-    # Get bounding coordinates from the box
-    x1, y1, x2, y2 = map(int, box.xyxy[0])
-
-    # Calculate the height and the width of the entity
-    height = y2 - y1
-    width = x2 - x1
-    threshold = height - width
-    cvzone.cornerRect(frame, [x1, y1, width, height], l=30, rt=6)
-    cvzone.putTextRect(
-        frame, f"{class_detect}", [x1 + 8, y1 - 12], thickness=2, scale=2
-    )
-
-    if threshold < 0:
-        if fallen:
-            elapsed_time = time.time() - start_time
-            if elapsed_time >= TIME_TILL_EMERGENCY_MESSAGE:
-                emergency.send_emergency_message()
-                fallen = False  # Reset after sending the message
-        else:
-            fallen = True
-            start_time = time.time()
-
-        cvzone.putTextRect(
-            frame, "Fall Detected", [height, width], thickness=2, scale=2
+if __name__ == "__main__":
+    if not os.path.exists(db.DB_PATH):
+        db.create_owner_database()
+        username = input("Please enter your username: ")
+        email = input("Please enter your email: ")
+        first_name = input("Please enter your first name: ")
+        last_name = input("Please enter your last name: ")
+        emergency_contact = int(input("Please enter the emergency contact number: "))
+        carrier = input(
+            "Please enter the carrier associated with the emergency number: "
         )
-    else:
-        fallen = False
 
-
-while True:
-    ret, frame = cap.read()
-    # Exit if video ends
-    if not ret:
-        break
-
-    frame = cv2.resize(frame, (980, 740))
-    results = model(frame)
-
-    for result in results:
-        for box in result.boxes:
-            # Calculate the confidence and detected class of the object
-            confidence = math.ceil(box.conf[0] * 100)
-            class_detect = classnames[int(box.cls[0])]
-
-            # Only process fall detection for class "person"
-            if confidence > CONFIDENCE_THRESHOLD and class_detect == "person":
-                detect_fall(box, class_detect, frame)
-
-    cv2.imshow("frame", frame)
-    if cv2.waitKey(1) & 0xFF == ord("t"):
-        break
-
-
-cap.release()
-cv2.destroyAllWindows()
+        db.insert_data(
+            username=username,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            emergency_contact=emergency_contact,
+            carrier=carrier,
+        )
+    fall.run()
