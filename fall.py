@@ -20,10 +20,12 @@ cap = cv2.VideoCapture(VIDEO_PATH)
 
 fallen = False
 start_time = 0
+# Every time a message is sent, value is doubled - resetted if no fall detected
+retry_factor = 1
 
 
 def detect_fall(box, class_detect, frame):
-    global fallen, start_time
+    global fallen, start_time, retry_factor
     # Get bounding coordinates from the box
     x1, y1, x2, y2 = map(int, box.xyxy[0])
 
@@ -39,8 +41,9 @@ def detect_fall(box, class_detect, frame):
     if threshold < 0:
         if fallen:
             elapsed_time = time.time() - start_time
-            if elapsed_time >= TIME_TILL_EMERGENCY_MESSAGE:
+            if elapsed_time >= TIME_TILL_EMERGENCY_MESSAGE * retry_factor:
                 emergency.send_emergency_message()
+                retry_factor *= 2  # Double the retry factor
                 fallen = False  # Reset after sending the message
         else:
             fallen = True
@@ -51,6 +54,7 @@ def detect_fall(box, class_detect, frame):
         )
     else:
         fallen = False
+        retry_factor = 1
 
 
 def run():
